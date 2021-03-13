@@ -75,11 +75,11 @@ This class must now refer to the enum that you just made, like this:
 ```
 ^Now the "alien1" entity belongs to the group "aliens" and can collide with entities that have been explicitly placed inside of the "aliens," "bigRubbberBall," and "ground" groups.
 
-- Note: groups do not automatically collide with their own group. For example, one balloon does not automatically collide with another balloon unless the "balloons" group was specified as part of the "canCollideWith" array.
+- Note: groups do not automatically collide with their own group. For example, one balloon does not automatically collide with another balloon unless the "balloons" group was specified as part of the "andCanCollideWith" array.
 
-- Note: an entity does not automatically belong to any group. For example, if you make a wall entity and name it "wall," you must still call --  wall.setNewCollisionFilter(myGroup: .walls, canCollideWith: [ ])   -- in order to add the wall entity to the "walls" group.
+- Note: an entity does not automatically belong to any group. For example, if you make a wall entity and name it "wall," you must still call --  setNewCollisionFilter(thisEntity: wall, belongsToGroup: .walls, andCanCollideWith: [ ])   -- in order to add the wall entity to the "walls" group.
 
-- Note: If an entity does not have a CollisionComponent, then setNewCollisionFilter() will automatically add one to the entity for you, recursively generating collision shapes for all descendants of the entity as well.
+- Note: If an entity does not already have a CollisionComponent, then setNewCollisionFilter() will automatically add one to the entity for you, recursively generating collision shapes for all descendants of the entity as well.
 
 
 To allow the entity to collide with the scene mesh on Lidar-enabled devices:
