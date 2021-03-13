@@ -54,10 +54,11 @@ Next, as shown in the example, your project must contain a class that you have c
 This class must now refer to the enum that you just made, like this:
 `typealias CollisionGroupsEnum = MyCustomCollisionGroups`
 
-This YouTube video shows the steps in practice: 
+
+[This YouTube video](https://youtu.be/Pit-Dn8WvN8) shows these steps in practice.
 
 
- Next, call either the "setNewCollisionFilter()" function or the "returnNewCollisionFilter()" function on any entity that you want to use it on.
+ Next, call the "setNewCollisionFilter()" function for any entity that you want to use it on.
  Here is an example:
  
  ``` swift
@@ -99,6 +100,12 @@ And then use that sceneMesh group in the `setNewCollisionFilter` method just lik
     setNewCollisionFilter(thisEntity: boxAnchor.steelBox!, belongsToGroup: .teammates, andCanCollideWith: [.sceneMesh, .aliens])
 ```
 Then, copy and paste the `runLiDARConfiguration()` function from the example project into your project and call it.
+This is how you check if the user is on a LiDAR-enabled device:
+``` swift
+if ARWorldTrackingConfiguration.supportsSceneReconstruction(.mesh) {
+   runLiDARConfiguration()
+}
+```
 
 
 

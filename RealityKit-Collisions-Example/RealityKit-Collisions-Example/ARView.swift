@@ -153,8 +153,12 @@ class ARSUIView: ARView, HasCollisionGroups {
         configuration.planeDetection = .horizontal
         configuration.sceneReconstruction = .mesh
         self.session.run(configuration)
+        
+        //Allows objects to bounce off of the sceneMesh.
         self.environment.sceneUnderstanding.options.insert(.physics)
-        //self.debugOptions.insert(.showSceneUnderstanding) //show colored mesh.
+        
+        //show colored mesh.
+        //self.debugOptions.insert(.showSceneUnderstanding)
     }
     
     
