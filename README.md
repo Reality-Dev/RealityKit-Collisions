@@ -2,6 +2,9 @@
 
 This is a convenience API for setting Collision Filters in RealityKit. 
 
+
+![CollisionFilters Example 1](media/CollisionFilters.gif)
+
 ## Discussion
 
 Collision Filters determine what group an entity belongs to, and what groups of entities it can collide with. 
@@ -42,7 +45,7 @@ If you want to run code when collision events occur, [see this article](https://
 
 
 - To allow you to add your own custom collision groups you must first define them:
-Copy and paste this enum in the global scope (not contained within a class, struct, etc.) and replace the case names with the collision groups you want to have in your own app. You could make one like this if you wanted to have "teammate" and "alien" groups:
+Copy and paste this enum in the global scope (not contained within a class, struct, etc.) and replace the case names with the collision groups you want to have in your own app. You could make one like this if you wanted to have "teammates" and "aliens" groups:
 ``` swift
     public enum MyCustomCollisionGroups: String, CaseIterable {
         case teammates, aliens
