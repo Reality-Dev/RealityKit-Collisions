@@ -34,6 +34,8 @@ If you run this app on a LiDAR-enabled device, the entities will also collide wi
 
 ## Usage
 
+[This YouTube video](https://youtu.be/Pit-Dn8WvN8) shows these steps in practice.
+
 - After installing, import `CollisionFilters` to your .swift file
 
 If you want to run code when collision events occur, [see this article](https://realitydev.medium.com/realitykit-easier-collision-groups-818b07508c4c)
@@ -55,16 +57,12 @@ This class must now refer to the enum that you just made, like this:
 `typealias CollisionGroupsEnum = MyCustomCollisionGroups`
 
 
-[This YouTube video](https://youtu.be/Pit-Dn8WvN8) shows these steps in practice.
-
 
  Next, call the "setNewCollisionFilter()" function for any entity that you want to use it on.
  Here is an example:
  
  ``` swift
  class ViewController: UIViewController {
- 
-    let myBalloon = ModelEntity()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -99,7 +97,7 @@ And then use that sceneMesh group in the `setNewCollisionFilter` method just lik
 ``` swift
     setNewCollisionFilter(thisEntity: boxAnchor.steelBox!, belongsToGroup: .teammates, andCanCollideWith: [.sceneMesh, .aliens])
 ```
-Then, copy and paste the `runLiDARConfiguration()` function from the example project into your project and call it.
+Using either option, copy and paste the `runLiDARConfiguration()` function from the example project into your project and call it.
 This is how you check if the user is on a LiDAR-enabled device:
 ``` swift
 if ARWorldTrackingConfiguration.supportsSceneReconstruction(.mesh) {
