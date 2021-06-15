@@ -35,7 +35,12 @@ public extension HasCollisionGroups{
         var myCollisionComponent = entity.components[CollisionComponent.self] as? CollisionComponent
         if myCollisionComponent == nil {
             print(entity.name, "did Not have a collision Component...generating one.")
-            entity.generateCollisionShapes(recursive: true) //generates shapes for descendants as well.
+            
+            entity.components.set(CollisionComponent(shapes: []))
+            //The method stores the shape in the entity’s CollisionComponent instance.
+            //generates shapes for descendants as well.
+            entity.generateCollisionShapes(recursive: true)
+            
             myCollisionComponent = entity.components[CollisionComponent.self] as? CollisionComponent
         }
         myCollisionComponent?.filter = filter
@@ -72,7 +77,12 @@ public extension HasCollisionGroups{
         var myCollisionComponent = entity.components[CollisionComponent.self] as? CollisionComponent
         if myCollisionComponent == nil {
             print(entity.name, "did Not have a collision Component...generating it.")
-            entity.generateCollisionShapes(recursive: true) //generates shapes for descendants as well.
+            
+            entity.components.set(CollisionComponent(shapes: []))
+            //The method stores the shape in the entity’s CollisionComponent instance.
+            //generates shapes for descendants as well.
+            entity.generateCollisionShapes(recursive: true)
+            
             myCollisionComponent = entity.components[CollisionComponent.self] as? CollisionComponent
         }
         guard #available(iOS 13.4, *) else {
