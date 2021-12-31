@@ -122,6 +122,8 @@ myEntity.components[CollisionComponent.self] = newCollisionComponent
 ```
 
 
+## More
+
 If anything is unclear, please [send me a tweet](https://twitter.com/gmj4k)
 
-If you see a way things can be done better please feel free to contribute by making a fork & pull request.
+Please feel free to contribute by making a fork & pull request.
