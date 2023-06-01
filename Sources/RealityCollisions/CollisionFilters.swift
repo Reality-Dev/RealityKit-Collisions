@@ -17,7 +17,7 @@ public protocol HasCollisionGroups : AnyObject {
 }
 
 
-@available(iOS 13.0, *)
+@available(iOS 13.0, macOS 10.15, *)
 public extension HasCollisionGroups{
  
 /**

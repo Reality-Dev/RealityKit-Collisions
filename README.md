@@ -1,9 +1,9 @@
-#  Collision-Filters
+#  RealityKit-Collisions
 
 This is a convenience API for setting Collision Filters in RealityKit. 
 
 
-![CollisionFilters Example 1](media/CollisionFilters.gif)
+![RealityKitCollisions Example 1](media/CollisionFilters.gif)
 
 ## Discussion
 
@@ -39,7 +39,7 @@ If you run this app on a LiDAR-enabled device, the entities will also collide wi
 
 [This YouTube video](https://youtu.be/Pit-Dn8WvN8) shows these steps in practice.
 
-- After installing, import `CollisionFilters` to your .swift file
+- After installing, import `RealityKitCollisions` to your .swift file
 
 If you want to run code when collision events occur, [see this article](https://realitydev.medium.com/realitykit-easier-collision-groups-818b07508c4c)
 

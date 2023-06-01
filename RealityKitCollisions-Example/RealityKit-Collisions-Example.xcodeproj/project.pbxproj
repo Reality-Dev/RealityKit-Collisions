@@ -3,10 +3,11 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 52;
 	objects = {
 
 /* Begin PBXBuildFile section */
+		551479DC2A2960EF000EBB0D /* RealityCollisions in Frameworks */ = {isa = PBXBuildFile; productRef = 551479DB2A2960EF000EBB0D /* RealityCollisions */; };
 		557CD32325FC07CE00DACC41 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 557CD32225FC07CE00DACC41 /* README.md */; };
 		55B500A025FAF13900EFBA47 /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55B5009725FAF13900EFBA47 /* Model.swift */; };
 		55B500A125FAF13900EFBA47 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 55B5009825FAF13900EFBA47 /* Assets.xcassets */; };
@@ -15,10 +16,10 @@
 		55B500A525FAF13900EFBA47 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55B5009D25FAF13900EFBA47 /* AppDelegate.swift */; };
 		55B500A625FAF13900EFBA47 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55B5009E25FAF13900EFBA47 /* ContentView.swift */; };
 		55B500B125FAF1C200EFBA47 /* Aliens.rcproject in Sources */ = {isa = PBXBuildFile; fileRef = 55B500B025FAF1C200EFBA47 /* Aliens.rcproject */; };
-		55B500BE25FAF3F000EFBA47 /* CollisionFilters.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55B500BD25FAF3F000EFBA47 /* CollisionFilters.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		551479D72A295F32000EBB0D /* RealityKit-Collisions */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = "RealityKit-Collisions"; path = ..; sourceTree = "<group>"; };
 		557CD32225FC07CE00DACC41 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../../README.md; sourceTree = "<group>"; };
 		55B5009725FAF13900EFBA47 /* Model.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Model.swift; sourceTree = "<group>"; };
 		55B5009825FAF13900EFBA47 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -28,7 +29,6 @@
 		55B5009E25FAF13900EFBA47 /* ContentView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		55B5009F25FAF13900EFBA47 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		55B500B025FAF1C200EFBA47 /* Aliens.rcproject */ = {isa = PBXFileReference; lastKnownFileType = file.rcproject; path = Aliens.rcproject; sourceTree = "<group>"; };
-		55B500BD25FAF3F000EFBA47 /* CollisionFilters.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CollisionFilters.swift; sourceTree = "<group>"; };
 		55BFE66525D2200F00E2BB8C /* RealityKit-Collisions-Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "RealityKit-Collisions-Example.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -37,12 +37,28 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				551479DC2A2960EF000EBB0D /* RealityCollisions in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		551479D62A295F32000EBB0D /* Packages */ = {
+			isa = PBXGroup;
+			children = (
+				551479D72A295F32000EBB0D /* RealityKit-Collisions */,
+			);
+			name = Packages;
+			sourceTree = "<group>";
+		};
+		551479D82A295FAF000EBB0D /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		55B5009625FAF13900EFBA47 /* RealityKit-Collisions-Example */ = {
 			isa = PBXGroup;
 			children = (
@@ -53,7 +69,6 @@
 				55B500B025FAF1C200EFBA47 /* Aliens.rcproject */,
 				55B5009D25FAF13900EFBA47 /* AppDelegate.swift */,
 				55B5009E25FAF13900EFBA47 /* ContentView.swift */,
-				55B500BB25FAF3F000EFBA47 /* Sources */,
 				55B5009925FAF13900EFBA47 /* Preview Content */,
 				55B5009F25FAF13900EFBA47 /* Info.plist */,
 			);
@@ -68,28 +83,13 @@
 			path = "Preview Content";
 			sourceTree = "<group>";
 		};
-		55B500BB25FAF3F000EFBA47 /* Sources */ = {
-			isa = PBXGroup;
-			children = (
-				55B500BC25FAF3F000EFBA47 /* CollisionFilters */,
-			);
-			name = Sources;
-			path = ../../Sources;
-			sourceTree = "<group>";
-		};
-		55B500BC25FAF3F000EFBA47 /* CollisionFilters */ = {
-			isa = PBXGroup;
-			children = (
-				55B500BD25FAF3F000EFBA47 /* CollisionFilters.swift */,
-			);
-			path = CollisionFilters;
-			sourceTree = "<group>";
-		};
 		55BFE65C25D2200F00E2BB8C = {
 			isa = PBXGroup;
 			children = (
+				551479D62A295F32000EBB0D /* Packages */,
 				55B5009625FAF13900EFBA47 /* RealityKit-Collisions-Example */,
 				55BFE66625D2200F00E2BB8C /* Products */,
+				551479D82A295FAF000EBB0D /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -117,6 +117,9 @@
 			dependencies = (
 			);
 			name = "RealityKit-Collisions-Example";
+			packageProductDependencies = (
+				551479DB2A2960EF000EBB0D /* RealityCollisions */,
+			);
 			productName = "Sound Localization";
 			productReference = 55BFE66525D2200F00E2BB8C /* RealityKit-Collisions-Example.app */;
 			productType = "com.apple.product-type.application";
@@ -173,7 +176,6 @@
 			files = (
 				55B500A525FAF13900EFBA47 /* AppDelegate.swift in Sources */,
 				55B500A025FAF13900EFBA47 /* Model.swift in Sources */,
-				55B500BE25FAF3F000EFBA47 /* CollisionFilters.swift in Sources */,
 				55B500A625FAF13900EFBA47 /* ContentView.swift in Sources */,
 				55B500B125FAF1C200EFBA47 /* Aliens.rcproject in Sources */,
 				55B500A425FAF13900EFBA47 /* ARView.swift in Sources */,
@@ -306,7 +308,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"RealityKit-Collisions-Example/Preview Content\"";
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = 9792AFNZU9;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/RealityKit-Collisions-Example/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
@@ -314,7 +316,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "";
+				PRODUCT_BUNDLE_IDENTIFIER = pro.realityAcademy.RealityCollisions;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -328,7 +330,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"RealityKit-Collisions-Example/Preview Content\"";
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = 9792AFNZU9;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/RealityKit-Collisions-Example/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
@@ -336,7 +338,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "";
+				PRODUCT_BUNDLE_IDENTIFIER = pro.realityAcademy.RealityCollisions;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -365,6 +367,13 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		551479DB2A2960EF000EBB0D /* RealityCollisions */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = RealityCollisions;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 55BFE65D25D2200F00E2BB8C /* Project object */;
 }

@@ -4,14 +4,14 @@
 import PackageDescription
 
 let package = Package(
-  name: "CollisionFiltersv",
+  name: "RealityCollisions",
   platforms: [.iOS("13.0")],
   products: [
-    .library(name: "CollisionFilters", targets: ["CollisionFilters"])
+    .library(name: "RealityCollisions", targets: ["RealityCollisions"])
   ],
   dependencies: [],
   targets: [
-    .target(name: "CollisionFilters", dependencies: [])
+    .target(name: "RealityCollisions", dependencies: [])
   ],
   swiftLanguageVersions: [.v5]
 )

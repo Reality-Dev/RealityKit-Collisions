@@ -8,7 +8,7 @@
 import ARKit
 import RealityKit
 import Combine
-//import CollisionFilters
+import RealityCollisions
 
 
 public enum CollisionGroups: String, CaseIterable {
