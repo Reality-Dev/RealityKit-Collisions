@@ -5,59 +5,81 @@
 //  Created by Grant Jarvis on 8/19/20.
 //  Copyright © 2020 Grant Jarvis. All rights reserved.
 //
-
-
  
 import RealityKit
 
-
-public protocol HasCollisionGroups : AnyObject {
-
-    associatedtype CollisionGroupsEnum: RawRepresentable, CaseIterable where CollisionGroupsEnum.RawValue: StringProtocol
-}
-
-
 @available(iOS 13.0, macOS 10.15, *)
-public extension HasCollisionGroups{
- 
-/**
+public extension Entity {
+    
+    /**
      Automatically sets the new filter on the current CollisionComponent, or adds a CollisionComponent with the new filter if there is not one.
      
      For any of your groups that include the word "scene" or "Scene," they will automatically be treated as the .sceneUnderstanding CollisionGroup, which refers to the scene mesh for Lidar-enabled devices.
      - Parameters:
-        - myGroup: The group this entity belongs to.
-        - canCollideWith: The other groups that this entity can collide with.
- */
-    func setNewCollisionFilter(thisEntity entity: Entity, belongsToGroup myGroup: CollisionGroupsEnum, andCanCollideWith otherGroups: [CollisionGroupsEnum]){
-
-        let filter = returnNewCollisionFilter(belongsToGroup: myGroup, andCanCollideWith: otherGroups)
+     - myGroup: The group this entity belongs to.
+     - canCollideWith: The other groups that this entity can collide with.
+     */
+    func setNewCollisionFilter<CollisionGroupsEnum: RawRepresentable & CaseIterable>(belongsToGroup myGroup: CollisionGroupsEnum,
+                                                                                     andCanCollideWith otherGroups: [CollisionGroupsEnum])  where CollisionGroupsEnum.RawValue: StringProtocol
+    {
         
-        var myCollisionComponent = entity.components[CollisionComponent.self] as? CollisionComponent
+        let filter = CollisionComponent.makeCollisionFilter(belongsToGroup: myGroup, andCanCollideWith: otherGroups)
+        
+        var myCollisionComponent = components[CollisionComponent.self] as? CollisionComponent
         if myCollisionComponent == nil {
-            print(entity.name, "did Not have a collision Component...generating one.")
+            print(name, "did Not have a collision Component...generating one.")
             
-            entity.components.set(CollisionComponent(shapes: []))
+            components.set(CollisionComponent(shapes: []))
             //The method stores the shape in the entity’s CollisionComponent instance.
             //generates shapes for descendants as well.
-            entity.generateCollisionShapes(recursive: true)
+            generateCollisionShapes(recursive: true)
             
-            myCollisionComponent = entity.components[CollisionComponent.self] as? CollisionComponent
+            myCollisionComponent = components[CollisionComponent.self] as? CollisionComponent
         }
         myCollisionComponent?.filter = filter
-        entity.components[CollisionComponent.self] = myCollisionComponent
+        components[CollisionComponent.self] = myCollisionComponent
     }
     
+    /**
+         Allows the entity to collide with the scene mesh on Lidar-enabled devices
+         
+         Call this method AFTER calling setNewCollisionFilter() if you intend on calling both methods.
+         */
+        func addCollisionWithLiDARMesh(){
+            var myCollisionComponent = components[CollisionComponent.self] as? CollisionComponent
+            if myCollisionComponent == nil {
+                print(name, "did Not have a collision Component...generating it.")
+                
+                components.set(CollisionComponent(shapes: []))
+                //The method stores the shape in the entity’s CollisionComponent instance.
+                //generates shapes for descendants as well.
+                generateCollisionShapes(recursive: true)
+                
+                myCollisionComponent = components[CollisionComponent.self] as? CollisionComponent
+            }
+            guard #available(iOS 13.4, *) else {
+                print("sceneUnderstanding only available on iOS 13.4 or newer")
+                return
+            }
+            myCollisionComponent?.filter.mask.formUnion(.sceneUnderstanding)
+            
+            components[CollisionComponent.self] = myCollisionComponent
+        }
+}
+
+public extension CollisionComponent {
     
 
 /**
-     Returns a new CollisionFilter, but does Not set it on an entity.
+     Returns a new CollisionFilter, but does Not set it on an
      
      This is useful for inserting into CollisionComponent initializer as the "filter:" parameter when more customization is needed, such as using a custom shape and mode.
      - Parameters:
         - myGroup: The group this filter belongs to.
         - canCollideWith: The other groups that this filter can collide with.
  */
-     func returnNewCollisionFilter(belongsToGroup myGroup: CollisionGroupsEnum, andCanCollideWith otherGroups: [CollisionGroupsEnum]) -> CollisionFilter{
+    static func makeCollisionFilter<CollisionGroupsEnum: RawRepresentable & CaseIterable>(belongsToGroup myGroup: CollisionGroupsEnum, andCanCollideWith otherGroups: [CollisionGroupsEnum]) -> CollisionFilter where CollisionGroupsEnum.RawValue: StringProtocol
+      {
         
         let group = makeNewGroup(category: myGroup)
         
@@ -68,40 +90,14 @@ public extension HasCollisionGroups{
         return filter
     }
     
-/**
-     Allows the entity to collide with the scene mesh on Lidar-enabled devices
-     
-     Call this method AFTER calling setNewCollisionFilter() if you intend on calling both methods.
-     */
-    func addCollisionWithLiDARMesh(on entity: Entity){
-        var myCollisionComponent = entity.components[CollisionComponent.self] as? CollisionComponent
-        if myCollisionComponent == nil {
-            print(entity.name, "did Not have a collision Component...generating it.")
-            
-            entity.components.set(CollisionComponent(shapes: []))
-            //The method stores the shape in the entity’s CollisionComponent instance.
-            //generates shapes for descendants as well.
-            entity.generateCollisionShapes(recursive: true)
-            
-            myCollisionComponent = entity.components[CollisionComponent.self] as? CollisionComponent
-        }
-        guard #available(iOS 13.4, *) else {
-            print("sceneUnderstanding only available on iOS 13.4 or newer")
-            return
-        }
-        myCollisionComponent?.filter.mask.formUnion(.sceneUnderstanding)
-        entity.components[CollisionComponent.self] = myCollisionComponent
-    }
     
-    
-    
-    private func makeNewGroup(category: CollisionGroupsEnum) -> CollisionGroup{
+    static fileprivate func makeNewGroup<CollisionGroupsEnum: RawRepresentable & CaseIterable>(category: CollisionGroupsEnum) -> CollisionGroup where CollisionGroupsEnum.RawValue: StringProtocol {
         let groupNumber = findGroupNumber(category: category)
         let newGroup = CollisionGroup.init(rawValue: groupNumber!)
         return newGroup
     }
     
-    private func findGroupNumber(category: CollisionGroupsEnum) -> UInt32?{
+    static fileprivate func findGroupNumber<CollisionGroupsEnum: RawRepresentable & CaseIterable>(category: CollisionGroupsEnum) -> UInt32? where CollisionGroupsEnum.RawValue: StringProtocol {
         guard let integerIndex = CollisionGroupsEnum.allCases.firstIndex(where: {$0 == category}) as? Int else {return nil}
             //This gives 2^integerIndex
             //Use only UInt32's that have only one "1" bit in them to make life easier.
@@ -121,17 +117,12 @@ public extension HasCollisionGroups{
     }
     
     
-    private func makeNewMask(otherGroups: [CollisionGroupsEnum]) -> CollisionGroup{
+    static fileprivate func makeNewMask<CollisionGroupsEnum: RawRepresentable & CaseIterable>(otherGroups: [CollisionGroupsEnum]) -> CollisionGroup where CollisionGroupsEnum.RawValue: StringProtocol {
         var mask = UInt32()
         for category in otherGroups {
             mask += findGroupNumber(category: category)!
         }
         return CollisionGroup(rawValue: mask)
     }
-    
-    
 }
-
-
-
 

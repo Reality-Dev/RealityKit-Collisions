@@ -37,7 +37,7 @@ If you run this app on a LiDAR-enabled device, the entities will also collide wi
 
 ## Usage
 
-[This YouTube video](https://youtu.be/Pit-Dn8WvN8) shows these steps in practice.
+[This YouTube video](https://youtu.be/Pit-Dn8WvN8) is out of date and applies only to the versions of this package before 3.0.0
 
 - After installing, import `RealityKitCollisions` to your .swift file
 
@@ -53,14 +53,6 @@ Copy and paste this enum in the global scope (not contained within a class, stru
 ```
 This works for up to 32 different groups.
 
-
-Next, as shown in the example, your project must contain a class that you have conformed to the `HasCollisionGroups` protocol, such as this one:
-   `class ViewController: UIViewController, HasCollisionGroups {}`
-This class must now refer to the enum that you just made, like this:
-`typealias CollisionGroupsEnum = MyCustomCollisionGroups`
-
-
-
  Next, call the "setNewCollisionFilter()" function for any entity that you want to use it on.
  Here is an example:
  
@@ -70,26 +62,42 @@ This class must now refer to the enum that you just made, like this:
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        setNewCollisionFilter(thisEntity: aliensScene.alien1!,
-                              belongsToGroup: .aliens,
+        aliensScene.alien1!.setNewCollisionFilter(
+                              belongsToGroup: CollisionGroups.aliens,
                               andCanCollideWith: [.aliens, .bigRubbberBall, .ground])
     }
 }
 ```
+
 ^Now the "alien1" entity belongs to the group "aliens" and can collide with entities that have been explicitly placed inside of the "aliens," "bigRubbberBall," and "ground" groups.
+
+In order for Swift to infer the type of your collision groups enum, you must specify the type name of your custom collision groups enum at least once in the parameters of the function.
+i.e. This is why the above parameter was passed in this way:
+        `belongsToGroup: CollisionGroups.aliens`
+    and not this way:
+        `belongsToGroup: .aliens`.
+Because this was written as `CollisionGroups.aliens`, swift now knows that `CollisionGroups` is the enum that defines your custom collision groups.
+Notice, for convenience, how the other input paramters do *not* have to specify the enum type:
+     `andCanCollideWith: [.aliens, .bigRubbberBall, .ground]`
+     
+## Important:
+
+- Be sure to only define *ONE* collision groups enum. i.e. Creating multiple different enums and passing them to different calls of `.setNewCollisionFilter(belongsToGroup:,
+                              andCanCollideWith:)` will cause unexpected results.
 
 - Note: groups do not automatically collide with their own group. For example, one balloon does not automatically collide with another balloon unless the "balloons" group was specified as part of the "andCanCollideWith" array.
 
-- Note: an entity does not automatically belong to any group. For example, if you make a wall entity and name it "wall," you must still call --  setNewCollisionFilter(thisEntity: wall, belongsToGroup: .walls, andCanCollideWith: [ ])   -- in order to add the wall entity to the "walls" group.
+- Note: an entity does not automatically belong to any group. For example, if you make a wall entity and name it "wall," you must still call  `wall.setNewCollisionFilter(belongsToGroup: .walls, andCanCollideWith: [])` in order to add the wall entity to the "walls" group.
 
-- Note: If an entity does not already have a CollisionComponent, then setNewCollisionFilter() will automatically add one to the entity for you, recursively generating collision shapes for all descendants of the entity as well.
+- Note: If an entity does not already have a CollisionComponent, then `setNewCollisionFilter()` will automatically add one to the entity for you, recursively generating collision shapes for all descendants of the entity as well.
 
 
-To allow the entity to collide with the scene mesh on Lidar-enabled devices:
-Option A:
-     Call this method AFTER calling setNewCollisionFilter() if you intend on calling both methods.
-     `addCollisionWithLiDARMesh(on entity: Entity)`
- Option B:
+## To allow the entity to collide with the scene mesh on Lidar-enabled devices:
+### Option A:
+     // Call this method AFTER calling setNewCollisionFilter() if you intend on calling both methods.
+     `myEnt.addCollisionWithLiDARMesh()`
+ 
+ ### Option B:
      Include a group in your enum spelled exactly as "sceneMesh" like this:
 ``` swift
          public enum MyCustomCollisionGroups: String, CaseIterable {
@@ -98,7 +106,7 @@ Option A:
 ```
 And then use that sceneMesh group in the `setNewCollisionFilter` method just like any other group, like this:
 ``` swift
-    setNewCollisionFilter(thisEntity: boxAnchor.steelBox!, belongsToGroup: .teammates, andCanCollideWith: [.sceneMesh, .aliens])
+        boxAnchor.steelBox!.setNewCollisionFilter(belongsToGroup: CollisionGroups.teammates, andCanCollideWith: [.sceneMesh, .aliens])
 ```
 Using either option, copy and paste the `runLiDARConfiguration()` function from the example project into your project and call it.
 This is how you check if the user is on a LiDAR-enabled device:
@@ -110,10 +118,10 @@ if ARWorldTrackingConfiguration.supportsSceneReconstruction(.mesh) {
 
 
 
-`returnNewCollisionFilter` Does Not set a filter on an entity, but it returns a filter. This is useful when you want to use a custom shape and mode on your `CollisionComponent`. It is inserted into the CollisionComponent initializer as the "filter:" parameter.
+`CollisionComponent.makeCollisionFilter` Does Not set a filter on an entity, but it returns a filter. This is useful when you want to use a custom shape and mode on your `CollisionComponent`. The returned filter is then inserted into the `CollisionComponent` initializer as the "filter:" parameter.
 Here is an example:
 ``` swift
-let newCollisonFilter = returnNewCollisionFilter(belongsToGroup: .teammates,
+let newCollisonFilter = CollisionComponent.makeCollisionFilter(belongsToGroup: CollisionGroups.teammates,
                                                  andCanCollideWith: [.aliens, .ground,.bigRubbberBall])
 let newCollisionComponent = CollisionComponent(shapes: [ShapeResource.generateBox(size: .one)],
                    mode: .trigger,

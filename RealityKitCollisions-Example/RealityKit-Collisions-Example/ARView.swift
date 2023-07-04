@@ -15,10 +15,7 @@ public enum CollisionGroups: String, CaseIterable {
     case teammates, aliens, bigRubbberBall, ground
 }
 
-
-class ARSUIView: ARView, HasCollisionGroups {
-    
-    typealias CollisionGroupsEnum = CollisionGroups
+class ARSUIView: ARView {
     
     var dataModel : DataModel
     
@@ -45,35 +42,28 @@ class ARSUIView: ARView, HasCollisionGroups {
     func sceneDidLoad(){
         
         guard let groundPlane = aliensScene.findEntity(named: "Ground Plane") else {return}
-
-
         
-        setNewCollisionFilter(thisEntity: groundPlane,
-                              belongsToGroup: .ground,
-                              andCanCollideWith: [.aliens, .bigRubbberBall, .teammates])
+        groundPlane.setNewCollisionFilter(belongsToGroup: CollisionGroups.ground, andCanCollideWith: [.aliens, .bigRubbberBall, .teammates])
         
-        setNewCollisionFilter(thisEntity: aliensScene.alien1!,
-                              belongsToGroup: .aliens,
+        aliensScene.alien1!.setNewCollisionFilter(
+                              belongsToGroup: CollisionGroups.aliens,
                               andCanCollideWith: [.aliens, .bigRubbberBall, .ground])
         
-        setNewCollisionFilter(thisEntity: aliensScene.alien2!,
-                              belongsToGroup: .aliens,
+        aliensScene.alien2!.setNewCollisionFilter(belongsToGroup: CollisionGroups.aliens,
                               andCanCollideWith: [.aliens, .bigRubbberBall, .ground])
         
         //--//
         //Teammates do Not get run over by the ball, but aliens do.
-        setNewCollisionFilter(thisEntity: aliensScene.teammate1!,
-                              belongsToGroup: .teammates,
+        aliensScene.teammate1!.setNewCollisionFilter(belongsToGroup: CollisionGroups.teammates,
                               andCanCollideWith: [.ground])
         
-        setNewCollisionFilter(thisEntity: aliensScene.teammate2!,
-                              belongsToGroup: .aliens,
+        aliensScene.teammate2!.setNewCollisionFilter(belongsToGroup: CollisionGroups.aliens,
                               andCanCollideWith: [.ground])
         
         //--//
-        setNewCollisionFilter(thisEntity: aliensScene.bigRubberBall!,
-                              belongsToGroup: .bigRubbberBall,
+        aliensScene.bigRubberBall!.setNewCollisionFilter(belongsToGroup: CollisionGroups.bigRubbberBall,
                               andCanCollideWith: [.ground, .aliens])
+        
         addCollisionListening(onEntity: aliensScene.bigRubberBall as! Entity & HasCollision)
         
         //If this device has LiDAR, then allow entities to collide with the LiDAR mesh.
@@ -86,13 +76,12 @@ class ARSUIView: ARView, HasCollisionGroups {
                                      self.aliensScene.teammate2!,
                                      self.aliensScene.bigRubberBall!]
                 sceneEntities.forEach { sceneEntity in
-                    self.addCollisionWithLiDARMesh(on: sceneEntity)
+                    sceneEntity.addCollisionWithLiDARMesh()
                 }
             }
 
         }
     }
-    
     
     
     func installSwipeGestures(){
@@ -125,14 +114,7 @@ class ARSUIView: ARView, HasCollisionGroups {
     }
     
     
-    
-    
-    
-    
-    
-    
-    
-    
+
     
     var collisionSubscriptions = [Cancellable]()
     func addCollisionListening(onEntity entity: Entity & HasCollision) {
@@ -205,7 +187,4 @@ extension ARSUIView: ARSessionDelegate {
     func session(_ session: ARSession, didUpdate frame: ARFrame) {
         //Code here
     }
-    
-    
-    
 }
