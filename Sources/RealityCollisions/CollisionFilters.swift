@@ -8,6 +8,8 @@
  
 import RealityKit
 
+public protocol HasCollisionGroups: RawRepresentable & CaseIterable where RawValue == Int {}
+
 @available(iOS 13.0, macOS 10.15, *)
 public extension Entity {
     
@@ -19,8 +21,8 @@ public extension Entity {
      - myGroup: The group this entity belongs to.
      - canCollideWith: The other groups that this entity can collide with.
      */
-    func setNewCollisionFilter<CollisionGroupsEnum: RawRepresentable & CaseIterable>(belongsToGroup myGroup: CollisionGroupsEnum,
-                                                                                     andCanCollideWith otherGroups: [CollisionGroupsEnum])  where CollisionGroupsEnum.RawValue: StringProtocol
+    func setNewCollisionFilter<CollisionGroupsEnum: HasCollisionGroups>(belongsToGroup myGroup: CollisionGroupsEnum,
+                                                                                     andCanCollideWith otherGroups: [CollisionGroupsEnum])
     {
         
         let filter = CollisionComponent.makeCollisionFilter(belongsToGroup: myGroup, andCanCollideWith: otherGroups)
@@ -69,7 +71,6 @@ public extension Entity {
 
 public extension CollisionComponent {
     
-
 /**
      Returns a new CollisionFilter, but does Not set it on an
      
@@ -78,7 +79,7 @@ public extension CollisionComponent {
         - myGroup: The group this filter belongs to.
         - canCollideWith: The other groups that this filter can collide with.
  */
-    static func makeCollisionFilter<CollisionGroupsEnum: RawRepresentable & CaseIterable>(belongsToGroup myGroup: CollisionGroupsEnum, andCanCollideWith otherGroups: [CollisionGroupsEnum]) -> CollisionFilter where CollisionGroupsEnum.RawValue: StringProtocol
+    static func makeCollisionFilter<CollisionGroupsEnum: HasCollisionGroups>(belongsToGroup myGroup: CollisionGroupsEnum, andCanCollideWith otherGroups: [CollisionGroupsEnum]) -> CollisionFilter
       {
         
         let group = makeNewGroup(category: myGroup)
@@ -91,20 +92,19 @@ public extension CollisionComponent {
     }
     
     
-    static fileprivate func makeNewGroup<CollisionGroupsEnum: RawRepresentable & CaseIterable>(category: CollisionGroupsEnum) -> CollisionGroup where CollisionGroupsEnum.RawValue: StringProtocol {
+    static fileprivate func makeNewGroup<CollisionGroupsEnum: HasCollisionGroups>(category: CollisionGroupsEnum) -> CollisionGroup {
         let groupNumber = findGroupNumber(category: category)
-        let newGroup = CollisionGroup.init(rawValue: groupNumber!)
+        let newGroup = CollisionGroup.init(rawValue: groupNumber)
         return newGroup
     }
     
-    static fileprivate func findGroupNumber<CollisionGroupsEnum: RawRepresentable & CaseIterable>(category: CollisionGroupsEnum) -> UInt32? where CollisionGroupsEnum.RawValue: StringProtocol {
-        guard let integerIndex = CollisionGroupsEnum.allCases.firstIndex(where: {$0 == category}) as? Int else {return nil}
+    static fileprivate func findGroupNumber<CollisionGroupsEnum: HasCollisionGroups>(category: CollisionGroupsEnum) -> UInt32 {
             //This gives 2^integerIndex
             //Use only UInt32's that have only one "1" bit in them to make life easier.
-            var groupNumber = UInt32(1 << integerIndex)
+        var groupNumber = UInt32(1 << category.rawValue)
 
         //support Scene Understanding.
-        if category.rawValue.contains("sceneMesh") {
+        if String(describing: category) == "sceneMesh" {
             if #available(iOS 13.4, *) {
                 groupNumber = CollisionGroup.sceneUnderstanding.rawValue
                 //2147483648
@@ -117,10 +117,10 @@ public extension CollisionComponent {
     }
     
     
-    static fileprivate func makeNewMask<CollisionGroupsEnum: RawRepresentable & CaseIterable>(otherGroups: [CollisionGroupsEnum]) -> CollisionGroup where CollisionGroupsEnum.RawValue: StringProtocol {
+    static fileprivate func makeNewMask<CollisionGroupsEnum: HasCollisionGroups>(otherGroups: [CollisionGroupsEnum]) -> CollisionGroup {
         var mask = UInt32()
         for category in otherGroups {
-            mask += findGroupNumber(category: category)!
+            mask += findGroupNumber(category: category)
         }
         return CollisionGroup(rawValue: mask)
     }

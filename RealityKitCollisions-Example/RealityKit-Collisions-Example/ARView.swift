@@ -10,8 +10,7 @@ import RealityKit
 import Combine
 import RealityCollisions
 
-
-public enum CollisionGroups: String, CaseIterable {
+public enum CollisionGroups: Int, HasCollisionGroups {
     case teammates, aliens, bigRubbberBall, ground
 }
 
@@ -22,7 +21,6 @@ class ARSUIView: ARView {
     var aliensScene : Aliens.Scene!
     
     var cameraAnchor = AnchorEntity(.camera)
-    
     
     required init(frame frameRect: CGRect, dataModel: DataModel) {
         self.dataModel = dataModel
@@ -37,7 +35,6 @@ class ARSUIView: ARView {
             runLiDARConfiguration()
         }
     }
-    
     
     func sceneDidLoad(){
         
@@ -69,7 +66,7 @@ class ARSUIView: ARView {
         //If this device has LiDAR, then allow entities to collide with the LiDAR mesh.
         if ARWorldTrackingConfiguration.supportsSceneReconstruction(.mesh) {
             //Add delay to give the device time to generate the mesh.
-            DispatchQueue.main.asyncAfter(deadline: .now() + 5){
+            DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
                 let sceneEntities = [self.aliensScene.alien1!,
                                      self.aliensScene.alien2!,
                                      self.aliensScene.teammate1!,
@@ -79,10 +76,8 @@ class ARSUIView: ARView {
                     sceneEntity.addCollisionWithLiDARMesh()
                 }
             }
-
         }
     }
-    
     
     func installSwipeGestures(){
         let directions : [UISwipeGestureRecognizer.Direction] = [
@@ -93,7 +88,6 @@ class ARSUIView: ARView {
             self.addGestureRecognizer(swipeGestureRecognizer)
         }
     }
-    
     
    @objc func swiped(_ recognizer: UISwipeGestureRecognizer){
         guard let bigRubberBall = aliensScene.bigRubberBall as? (Entity & HasPhysics) else {return}
@@ -113,9 +107,6 @@ class ARSUIView: ARView {
         bigRubberBall.applyLinearImpulse(impulse, relativeTo: cameraAnchor)
     }
     
-    
-
-    
     var collisionSubscriptions = [Cancellable]()
     func addCollisionListening(onEntity entity: Entity & HasCollision) {
         collisionSubscriptions.append(self.scene.subscribe(to: CollisionEvents.Began.self, on: entity) { event in
@@ -129,7 +120,6 @@ class ARSUIView: ARView {
         })
     }
     
-    
     func runLiDARConfiguration(){
         let configuration = ARWorldTrackingConfiguration()
         configuration.planeDetection = .horizontal
@@ -139,10 +129,9 @@ class ARSUIView: ARView {
         //Allows objects to bounce off of the sceneMesh.
         self.environment.sceneUnderstanding.options.insert(.physics)
         
-        //show colored mesh.
+        // Show colored mesh.
         //self.debugOptions.insert(.showSceneUnderstanding)
     }
-    
     
     func loadSceneAsyncronously(){
         // Load the scene from the Reality File, checking for any errors

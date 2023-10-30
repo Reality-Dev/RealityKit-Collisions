@@ -45,9 +45,9 @@ If you want to run code when collision events occur, [see this article](https://
 
 
 - To allow you to add your own custom collision groups you must first define them:
-Copy and paste this enum in the global scope (not contained within a class, struct, etc.) and replace the case names with the collision groups you want to have in your own app. You could make one like this if you wanted to have "teammates" and "aliens" groups:
+Copy and paste this enum wherever you need it (inside of the scope that you will use this package in, or in the global scope) and replace the case names with the collision groups you want to have in your own app. You could make one like this if you wanted to have "teammates" and "aliens" groups:
 ``` swift
-    public enum CollisionGroups: String, CaseIterable {
+    public enum CollisionGroups: Int, CaseIterable {
         case teammates, aliens
     }
 ```
@@ -94,13 +94,13 @@ Notice, for convenience, how the other input paramters do *not* have to specify 
 
 ## To allow the entity to collide with the scene mesh on Lidar-enabled devices:
 ### Option A:
-     // Call this method AFTER calling setNewCollisionFilter() if you intend on calling both methods.
+     // Call this method AFTER calling `setNewCollisionFilter()` if you intend on calling both methods.
      `myEnt.addCollisionWithLiDARMesh()`
  
  ### Option B:
      Include a group in your enum spelled exactly as "sceneMesh" like this:
 ``` swift
-         public enum MyCustomCollisionGroups: String, CaseIterable {
+         public enum MyCustomCollisionGroups: Int, CaseIterable {
              case sceneMesh, teammates, aliens
          }
 ```
