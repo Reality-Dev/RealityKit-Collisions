@@ -9,9 +9,9 @@ let package = Package(
   products: [
     .library(name: "RealityCollisions", targets: ["RealityCollisions"])
   ],
-  dependencies: [],
+  dependencies: [.package(url: "https://github.com/Reality-Dev/RealityKit-Utilities", from: "1.1.01"),],
   targets: [
-    .target(name: "RealityCollisions", dependencies: [])
+    .target(name: "RealityCollisions", dependencies: [.product(name: "RKUtilities", package: "RealityKit-Utilities")])
   ],
   swiftLanguageVersions: [.v5]
 )

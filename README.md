@@ -121,11 +121,11 @@ if ARWorldTrackingConfiguration.supportsSceneReconstruction(.mesh) {
 `CollisionComponent.makeCollisionFilter` Does Not set a filter on an entity, but it returns a filter. This is useful when you want to use a custom shape and mode on your `CollisionComponent`. The returned filter is then inserted into the `CollisionComponent` initializer as the "filter:" parameter.
 Here is an example:
 ``` swift
-let newCollisonFilter = CollisionComponent.makeCollisionFilter(belongsToGroup: CollisionGroups.teammates,
+let newCollisionFilter = CollisionComponent.makeCollisionFilter(belongsToGroup: CollisionGroups.teammates,
                                                  andCanCollideWith: [.aliens, .ground,.bigRubbberBall])
 let newCollisionComponent = CollisionComponent(shapes: [ShapeResource.generateBox(size: .one)],
                    mode: .trigger,
-                   filter: newCollisonFilter)
+                   filter: newCollisionFilter)
 myEntity.components[CollisionComponent.self] = newCollisionComponent
 ```
 

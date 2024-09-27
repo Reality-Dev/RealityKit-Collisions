@@ -7,6 +7,7 @@
 //
  
 import RealityKit
+import RKUtilities
 
 public protocol HasCollisionGroups: RawRepresentable & CaseIterable where RawValue == Int {}
 
@@ -27,19 +28,26 @@ public extension Entity {
         
         let filter = CollisionComponent.makeCollisionFilter(belongsToGroup: myGroup, andCanCollideWith: otherGroups)
         
-        var myCollisionComponent = components[CollisionComponent.self] as? CollisionComponent
-        if myCollisionComponent == nil {
-            print(name, "did Not have a collision Component...generating one.")
+        var myCollisionComponent = getCollisionComp()
+        
+        myCollisionComponent?.filter = filter
+        components[CollisionComponent.self] = myCollisionComponent
+    }
+    
+    private func getCollisionComp() -> CollisionComponent? {
+        func generateCollisionComp() -> CollisionComponent? {
+            print(name, "did Not have a collision Component...generating it.")
             
             components.set(CollisionComponent(shapes: []))
             //The method stores the shape in the entity’s CollisionComponent instance.
             //generates shapes for descendants as well.
             generateCollisionShapes(recursive: true)
             
-            myCollisionComponent = components[CollisionComponent.self] as? CollisionComponent
+            return component(forType: CollisionComponent.self)
         }
-        myCollisionComponent?.filter = filter
-        components[CollisionComponent.self] = myCollisionComponent
+        let existingCollisionComp = component(forType: CollisionComponent.self)
+        if existingCollisionComp == nil { print(name, "did Not have a collision Component...generating one.") }
+        return existingCollisionComp ?? generateCollisionComp()
     }
     
     /**
@@ -48,17 +56,8 @@ public extension Entity {
          Call this method AFTER calling setNewCollisionFilter() if you intend on calling both methods.
          */
         func addCollisionWithLiDARMesh(){
-            var myCollisionComponent = components[CollisionComponent.self] as? CollisionComponent
-            if myCollisionComponent == nil {
-                print(name, "did Not have a collision Component...generating it.")
-                
-                components.set(CollisionComponent(shapes: []))
-                //The method stores the shape in the entity’s CollisionComponent instance.
-                //generates shapes for descendants as well.
-                generateCollisionShapes(recursive: true)
-                
-                myCollisionComponent = components[CollisionComponent.self] as? CollisionComponent
-            }
+            var myCollisionComponent = getCollisionComp()
+            
             guard #available(iOS 13.4, *) else {
                 print("sceneUnderstanding only available on iOS 13.4 or newer")
                 return
@@ -67,6 +66,33 @@ public extension Entity {
             
             components[CollisionComponent.self] = myCollisionComponent
         }
+    
+    func removeCollisionsWith<CollisionGroupsEnum: HasCollisionGroups>(otherGroups: Set<CollisionGroupsEnum>)
+    {
+        guard var myCollisionComponent = component(forType: CollisionComponent.self) else {return}
+        
+        var mask = myCollisionComponent.filter.mask
+        
+        mask = mask.subtracting(CollisionComponent.makeNewMask(otherGroups: otherGroups))
+        
+        myCollisionComponent.filter.mask = mask
+        
+        components.set(myCollisionComponent)
+    }
+    
+    /// NOTE: You must give the Entity a `CollisionComponent` and a `CollisionGroup` to belong to BEFORE calling this method. Using`Entity.setNewCollisionFilter` will accomplish this.
+    func addCollisionsWith<CollisionGroupsEnum: HasCollisionGroups>(otherGroups: Set<CollisionGroupsEnum>)
+    {
+        guard var myCollisionComponent = component(forType: CollisionComponent.self) else {return}
+        
+        var mask = myCollisionComponent.filter.mask
+        
+        mask = mask.union(CollisionComponent.makeNewMask(otherGroups: otherGroups))
+        
+        myCollisionComponent.filter.mask = mask
+        
+        components.set(myCollisionComponent)
+    }
 }
 
 public extension CollisionComponent {
@@ -123,6 +149,40 @@ public extension CollisionComponent {
             mask += findGroupNumber(category: category)
         }
         return CollisionGroup(rawValue: mask)
+    }
+    
+    static func categoryFromGroupNumber<CollisionGroupsEnum: HasCollisionGroups>(groupNumber: UInt32) -> CollisionGroupsEnum? {
+        // Ensure the groupNumber has only one "1" bit (is a power of 2)
+        guard groupNumber != 0 && groupNumber & (groupNumber - 1) == 0 else {
+            return nil // Not a valid group number (not a power of 2)
+        }
+        
+        let rawValue = groupNumber.trailingZeroBitCount
+        return CollisionGroupsEnum(rawValue: rawValue)
+    }
+    
+    struct CollidingGroups<T: HasCollisionGroups> {
+        public let groupA: T
+        public let groupB: T
+    }
+    
+    static func fetchCollisionGroups<T: HasCollisionGroups>(from event: CollisionEvents.Began, of type: T.Type) -> CollidingGroups<T>? {
+        func collisionGroup(_ entity: Entity) -> T? {
+            let collisionComponent = entity.component(forType: CollisionComponent.self)
+
+            guard let groupRaw = collisionComponent?.filter.group.rawValue else {return nil}
+            return CollisionComponent.categoryFromGroupNumber(groupNumber: groupRaw)
+        }
+        
+        let entityA = event.entityA
+        let entityB = event.entityB
+        
+        guard
+            let groupA = collisionGroup(entityA),
+            let groupB = collisionGroup(entityB)
+        else {return nil}
+        
+        return CollidingGroups(groupA: groupA, groupB: groupB)
     }
 }
 
