@@ -46,7 +46,7 @@ public extension Entity {
             return component(forType: CollisionComponent.self)
         }
         let existingCollisionComp = component(forType: CollisionComponent.self)
-        if existingCollisionComp == nil { print(name, "did Not have a collision Component...generating one.") }
+        
         return existingCollisionComp ?? generateCollisionComp()
     }
     
@@ -142,7 +142,6 @@ public extension CollisionComponent {
         return groupNumber
     }
     
-    
     static func makeNewMask<CollisionGroupsEnum: HasCollisionGroups>(otherGroups: Set<CollisionGroupsEnum>) -> CollisionGroup {
         var mask = UInt32()
         for category in otherGroups {
@@ -165,24 +164,31 @@ public extension CollisionComponent {
         public let groupA: T
         public let groupB: T
     }
-    
-    static func fetchCollisionGroups<T: HasCollisionGroups>(from event: CollisionEvents.Began, of type: T.Type) -> CollidingGroups<T>? {
-        func collisionGroup(_ entity: Entity) -> T? {
-            let collisionComponent = entity.component(forType: CollisionComponent.self)
 
-            guard let groupRaw = collisionComponent?.filter.group.rawValue else {return nil}
-            return CollisionComponent.categoryFromGroupNumber(groupNumber: groupRaw)
-        }
-        
-        let entityA = event.entityA
-        let entityB = event.entityB
+    static func collisionGroup<T: HasCollisionGroups>(of entity: Entity, collisionGroups:  T.Type) -> T? {
+        let collisionComponent = entity.component(forType: CollisionComponent.self)
+
+        guard let groupRaw = collisionComponent?.filter.group.rawValue else {return nil}
+        return CollisionComponent.categoryFromGroupNumber(groupNumber: groupRaw)
+    }
+    
+    static func fetchCollisionGroups<T: HasCollisionGroups>(from event: any CollisionEvent,
+                                                            of type: T.Type) -> CollidingGroups<T>? {
         
         guard
-            let groupA = collisionGroup(entityA),
-            let groupB = collisionGroup(entityB)
+            let groupA = collisionGroup(of: event.entityA, collisionGroups: T.self),
+            let groupB = collisionGroup(of: event.entityB, collisionGroups: T.self)
         else {return nil}
         
         return CollidingGroups(groupA: groupA, groupB: groupB)
     }
 }
 
+public protocol CollisionEvent {
+    var entityA: Entity {get}
+    var entityB: Entity {get}
+}
+
+extension CollisionEvents.Began: CollisionEvent {}
+extension CollisionEvents.Updated: CollisionEvent {}
+extension CollisionEvents.Ended: CollisionEvent {}
