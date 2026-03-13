@@ -40,26 +40,26 @@ class ARSUIView: ARView {
         
         guard let groundPlane = aliensScene.findEntity(named: "Ground Plane") else {return}
         
-        groundPlane.setNewCollisionFilter(belongsToGroup: CollisionGroups.ground, andCanCollideWith: [.aliens, .bigRubbberBall, .teammates])
+        groundPlane.setNewCollisionFilter(belongsToGroup: CollisionGroups.ground, canCollideWith: [.aliens, .bigRubbberBall, .teammates])
         
         aliensScene.alien1!.setNewCollisionFilter(
                               belongsToGroup: CollisionGroups.aliens,
-                              andCanCollideWith: [.aliens, .bigRubbberBall, .ground])
+                              canCollideWith: [.aliens, .bigRubbberBall, .ground])
         
         aliensScene.alien2!.setNewCollisionFilter(belongsToGroup: CollisionGroups.aliens,
-                              andCanCollideWith: [.aliens, .bigRubbberBall, .ground])
+                              canCollideWith: [.aliens, .bigRubbberBall, .ground])
         
         //--//
         //Teammates do Not get run over by the ball, but aliens do.
         aliensScene.teammate1!.setNewCollisionFilter(belongsToGroup: CollisionGroups.teammates,
-                              andCanCollideWith: [.ground])
+                              canCollideWith: [.ground])
         
         aliensScene.teammate2!.setNewCollisionFilter(belongsToGroup: CollisionGroups.aliens,
-                              andCanCollideWith: [.ground])
+                              canCollideWith: [.ground])
         
         //--//
         aliensScene.bigRubberBall!.setNewCollisionFilter(belongsToGroup: CollisionGroups.bigRubbberBall,
-                              andCanCollideWith: [.ground, .aliens])
+                              canCollideWith: [.ground, .aliens])
         
         addCollisionListening(onEntity: aliensScene.bigRubberBall as! Entity & HasCollision)
         

@@ -64,7 +64,7 @@ This works for up to 32 different groups.
         
         aliensScene.alien1!.setNewCollisionFilter(
                               belongsToGroup: CollisionGroups.aliens,
-                              andCanCollideWith: [.aliens, .bigRubbberBall, .ground])
+                              canCollideWith: [.aliens, .bigRubbberBall, .ground])
     }
 }
 ```
@@ -78,16 +78,16 @@ i.e. This is why the above parameter was passed in this way:
         `belongsToGroup: .aliens`.
 Because this was written as `CollisionGroups.aliens`, swift now knows that `CollisionGroups` is the enum that defines your custom collision groups.
 Notice, for convenience, how the other input paramters do *not* have to specify the enum type:
-     `andCanCollideWith: [.aliens, .bigRubbberBall, .ground]`
+     `canCollideWith: [.aliens, .bigRubbberBall, .ground]`
      
 ## Important:
 
 - Be sure to only define *ONE* collision groups enum. i.e. Creating multiple different enums and passing them to different calls of `.setNewCollisionFilter(belongsToGroup:,
-                              andCanCollideWith:)` will cause unexpected results.
+                              canCollideWith:)` will cause unexpected results.
 
-- Note: groups do not automatically collide with their own group. For example, one balloon does not automatically collide with another balloon unless the "balloons" group was specified as part of the "andCanCollideWith" array.
+- Note: groups do not automatically collide with their own group. For example, one balloon does not automatically collide with another balloon unless the "balloons" group was specified as part of the "canCollideWith" array.
 
-- Note: an entity does not automatically belong to any group. For example, if you make a wall entity and name it "wall," you must still call  `wall.setNewCollisionFilter(belongsToGroup: .walls, andCanCollideWith: [])` in order to add the wall entity to the "walls" group.
+- Note: an entity does not automatically belong to any group. For example, if you make a wall entity and name it "wall," you must still call  `wall.setNewCollisionFilter(belongsToGroup: .walls, canCollideWith: [])` in order to add the wall entity to the "walls" group.
 
 - Note: If an entity does not already have a CollisionComponent, then `setNewCollisionFilter()` will automatically add one to the entity for you, recursively generating collision shapes for all descendants of the entity as well.
 
@@ -106,7 +106,7 @@ Notice, for convenience, how the other input paramters do *not* have to specify 
 ```
 And then use that sceneMesh group in the `setNewCollisionFilter` method just like any other group, like this:
 ``` swift
-        boxAnchor.steelBox!.setNewCollisionFilter(belongsToGroup: CollisionGroups.teammates, andCanCollideWith: [.sceneMesh, .aliens])
+        boxAnchor.steelBox!.setNewCollisionFilter(belongsToGroup: CollisionGroups.teammates, canCollideWith: [.sceneMesh, .aliens])
 ```
 Using either option, copy and paste the `runLiDARConfiguration()` function from the example project into your project and call it.
 This is how you check if the user is on a LiDAR-enabled device:
@@ -122,7 +122,7 @@ if ARWorldTrackingConfiguration.supportsSceneReconstruction(.mesh) {
 Here is an example:
 ``` swift
 let newCollisionFilter = CollisionComponent.makeCollisionFilter(belongsToGroup: CollisionGroups.teammates,
-                                                 andCanCollideWith: [.aliens, .ground,.bigRubbberBall])
+                                                 canCollideWith: [.aliens, .ground,.bigRubbberBall])
 let newCollisionComponent = CollisionComponent(shapes: [ShapeResource.generateBox(size: .one)],
                    mode: .trigger,
                    filter: newCollisionFilter)

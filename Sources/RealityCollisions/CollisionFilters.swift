@@ -23,10 +23,10 @@ public extension Entity {
      - canCollideWith: The other groups that this entity can collide with.
      */
     func setNewCollisionFilter<CollisionGroupsEnum: HasCollisionGroups>(belongsToGroup myGroup: CollisionGroupsEnum,
-                                                                                     andCanCollideWith otherGroups: Set<CollisionGroupsEnum>)
+                                                                                     canCollideWith otherGroups: Set<CollisionGroupsEnum>)
     {
         
-        let filter = CollisionComponent.makeCollisionFilter(belongsToGroup: myGroup, andCanCollideWith: otherGroups)
+        let filter = CollisionComponent.makeCollisionFilter(belongsToGroup: myGroup, canCollideWith: otherGroups)
         
         var myCollisionComponent = getCollisionComp()
         
@@ -105,7 +105,7 @@ public extension CollisionComponent {
         - myGroup: The group this filter belongs to.
         - canCollideWith: The other groups that this filter can collide with.
  */
-    static func makeCollisionFilter<CollisionGroupsEnum: HasCollisionGroups>(belongsToGroup myGroup: CollisionGroupsEnum, andCanCollideWith otherGroups: Set<CollisionGroupsEnum>) -> CollisionFilter
+    static func makeCollisionFilter<CollisionGroupsEnum: HasCollisionGroups>(belongsToGroup myGroup: CollisionGroupsEnum, canCollideWith otherGroups: Set<CollisionGroupsEnum>) -> CollisionFilter
       {
         
         let group = makeNewGroup(category: myGroup)
@@ -116,7 +116,6 @@ public extension CollisionComponent {
         
         return filter
     }
-    
     
     static func makeNewGroup<CollisionGroupsEnum: HasCollisionGroups>(category: CollisionGroupsEnum) -> CollisionGroup {
         let groupNumber = findGroupNumber(category: category)
