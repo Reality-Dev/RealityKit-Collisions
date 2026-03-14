@@ -17,7 +17,7 @@ public extension Entity {
     /**
      Automatically sets the new filter on the current CollisionComponent, or adds a CollisionComponent with the new filter if there is not one.
      
-     For any of your groups that include the word "scene" or "Scene," they will automatically be treated as the .sceneUnderstanding CollisionGroup, which refers to the scene mesh for Lidar-enabled devices.
+     If the case is named "sceneMesh", it is treated as .sceneUnderstanding. i.e. It will automatically be treated as the `.sceneUnderstanding` CollisionGroup provided by RealityKit, which refers to the scene mesh for Lidar-enabled devices.
      - Parameters:
      - myGroup: The group this entity belongs to.
      - canCollideWith: The other groups that this entity can collide with.
@@ -123,12 +123,14 @@ public extension CollisionComponent {
         return newGroup
     }
     
-    static fileprivate func findGroupNumber<CollisionGroupsEnum: HasCollisionGroups>(category: CollisionGroupsEnum) -> UInt32 {
-            //This gives 2^integerIndex
-            //Use only UInt32's that have only one "1" bit in them to make life easier.
-        var groupNumber = UInt32(1 << category.rawValue)
+    static fileprivate func findGroupNumber<CollisionGroupsEnum: HasCollisionGroups>(
+        category: CollisionGroupsEnum
+    ) -> UInt32 {
+        precondition((0..<32).contains(category.rawValue),
+                     "Collision group rawValue must be between 0 and 31")
 
-        //support Scene Understanding.
+        var groupNumber: UInt32 = 1 << UInt32(category.rawValue)
+
         if String(describing: category) == "sceneMesh" {
             if #available(iOS 13.4, *) {
                 groupNumber = CollisionGroup.sceneUnderstanding.rawValue
@@ -138,13 +140,16 @@ public extension CollisionComponent {
                 print("sceneUnderstanding only available on iOS 13.4 or newer")
             }
         }
+
         return groupNumber
     }
     
-    static func makeNewMask<CollisionGroupsEnum: HasCollisionGroups>(otherGroups: Set<CollisionGroupsEnum>) -> CollisionGroup {
-        var mask = UInt32()
+    static func makeNewMask<CollisionGroupsEnum: HasCollisionGroups>(
+        otherGroups: Set<CollisionGroupsEnum>
+    ) -> CollisionGroup {
+        var mask: UInt32 = 0
         for category in otherGroups {
-            mask += findGroupNumber(category: category)
+            mask |= findGroupNumber(category: category)
         }
         return CollisionGroup(rawValue: mask)
     }
